@@ -1,5 +1,1 @@
-"this folder contains 4 html files &
-one css file & an enpty database.db
-it needs js and flask .
-
-"
+iq quizz app made using html css js flask and python which tells the iq by asking the users 15 questions and each question has specific time limit and are specifically designed to test your iq after the quiz is over it analyzes the answers and give points and by comparing the points in the leaderboard it gives the global ranking of the user 
