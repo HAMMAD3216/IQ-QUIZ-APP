@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IQ Quiz — Leaderboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="page-leaderboard">
+
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="lb-container">
+
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <div class="lb-header" data-anim="fade-up">
+      <span class="lb-crown">🏆</span>
+      <h1 class="lb-title">Leaderboard</h1>
+      <p class="lb-sub">Top minds ranked by score &amp; IQ</p>
+    </div>
+
+    {% if entries %}
+
+    <!-- Top 3 podium -->
+    {% if entries|length >= 3 %}
+    <div class="podium" data-anim="fade-up" style="--d:.1s">
+
+      <!-- 2nd place -->
+      <div class="podium-col podium-2">
+        <div class="podium-avatar">{{ entries[1].emoji }}</div>
+        <div class="podium-name">{{ entries[1].name }}</div>
+        <div class="podium-iq">IQ {{ entries[1].iq }}</div>
+        <div class="podium-stand p2">
+          <span class="podium-rank">2</span>
+        </div>
+      </div>
+
+      <!-- 1st place -->
+      <div class="podium-col podium-1">
+        <div class="podium-crown">👑</div>
+        <div class="podium-avatar">{{ entries[0].emoji }}</div>
+        <div class="podium-name">{{ entries[0].name }}</div>
+        <div class="podium-iq">IQ {{ entries[0].iq }}</div>
+        <div class="podium-stand p1">
+          <span class="podium-rank">1</span>
+        </div>
+      </div>
+
+      <!-- 3rd place -->
+      <div class="podium-col podium-3">
+        <div class="podium-avatar">{{ entries[2].emoji }}</div>
+        <div class="podium-name">{{ entries[2].name }}</div>
+        <div class="podium-iq">IQ {{ entries[2].iq }}</div>
+        <div class="podium-stand p3">
+          <span class="podium-rank">3</span>
+        </div>
+      </div>
+
+    </div>
+    {% endif %}
+
+    <!-- Full table -->
+    <div class="lb-table-wrap" data-anim="fade-up" style="--d:.2s">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Score</th>
+            <th>IQ</th>
+            <th>Level</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in entries %}
+          <tr class="lb-row {% if loop.index <= 3 %}top-row{% endif %}">
+            <td class="rank-cell">
+              {% if loop.index == 1 %}<span class="medal gold">🥇</span>
+              {% elif loop.index == 2 %}<span class="medal silver">🥈</span>
+              {% elif loop.index == 3 %}<span class="medal bronze">🥉</span>
+              {% else %}<span class="rank-num">{{ e.rank }}</span>
+              {% endif %}
+            </td>
+            <td class="name-cell">{{ e.name }}</td>
+            <td class="score-cell">
+              <span class="score-pill">{{ e.score }}/{{ e.total }}</span>
+            </td>
+            <td class="iq-cell"><strong>{{ e.iq }}</strong></td>
+            <td class="level-cell">
+              <span class="level-tag">{{ e.emoji }} {{ e.label }}</span>
+            </td>
+            <td class="date-cell">{{ e.date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <!-- Empty state -->
+    <div class="empty-state" data-anim="fade-up" style="--d:.1s">
+      <div class="empty-icon">🧪</div>
+      <h3>No Results Yet</h3>
+      <p>Be the first to take the quiz and claim the top spot!</p>
+      <a href="/" class="btn-cta btn-retry">Start Quiz</a>
+    </div>
+    {% endif %}
+
+    <div class="lb-cta" data-anim="fade-up" style="--d:.3s">
+      <a href="/" class="btn-cta btn-retry">Take the Quiz</a>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

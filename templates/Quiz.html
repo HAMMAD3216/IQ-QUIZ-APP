@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IQ Quiz — Question</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="page-quiz">
+
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Top bar: progress + timer -->
+  <header class="quiz-header">
+    <div class="quiz-header-inner">
+      <div class="q-meta">
+        <span class="q-label">Question</span>
+        <span class="q-counter"><span id="currentQ">1</span> / {{ total }}</span>
+      </div>
+
+      <!-- Timer ring (FIX #4: Added accessibility attributes) -->
+      <div class="timer-wrap">
+        <svg class="timer-ring" viewBox="0 0 64 64" aria-label="Timer countdown" role="img">
+          <circle class="ring-bg" cx="32" cy="32" r="28"/>
+          <circle class="ring-fill" id="timerRing" cx="32" cy="32" r="28"
+            stroke-dasharray="175.93"
+            stroke-dashoffset="0"/>
+        </svg>
+        <span class="timer-num" id="timerNum">{{ time_per_question }}</span>
+      </div>
+
+      <div class="q-meta" style="text-align:right">
+        <span class="q-label">Category</span>
+        <span class="q-counter category-tag" id="categoryTag">—</span>
+      </div>
+    </div>
+
+    <!-- Progress bar (FIX #3: Added safe division with fallback) -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width: {% if total and total > 0 %}{{ (1/total*100)|round(1) }}{% else %}0{% endif %}%"></div>
+    </div>
+  </header>
+
+  <!-- Main quiz area -->
+  <main class="quiz-main">
+    <form id="quizForm" action="/submit" method="POST">
+
+      <!-- All questions rendered, shown one at a time -->
+      {% for q in questions %}
+      <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-index="{{ loop.index }}">
+
+        <div class="q-number-badge">Q{{ loop.index }}</div>
+        <!-- FIX #5: Escape HTML in question text (auto-escape is on, but added |e for explicit safety) -->
+        <h2 class="q-text">{{ q.question|e }}</h2>
+
+        <div class="options-grid">
+          {% for opt in q.options %}
+          <!-- FIX #6: Added unique IDs for each radio input -->
+          <label class="option-label" for="q{{ q.id }}_{{ loop.index0 }}">
+            <input
+              type="radio"
+              id="q{{ q.id }}_{{ loop.index0 }}"
+              name="answer_{{ q.id }}"
+              value="{{ opt|e }}"
+            />
+            <span class="option-letter">{{ ['A','B','C','D'][loop.index0] }}</span>
+            <span class="option-text">{{ opt|e }}</span>
+            <span class="option-check">✓</span>
+          </label>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% endfor %}
+
+      <!-- Navigation -->
+      <div class="quiz-nav">
+        <button type="button" class="btn-nav btn-prev" id="prevBtn" onclick="changeQuestion(-1)" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Previous
+        </button>
+
+        <div class="q-dots" id="qDots">
+          {% for q in questions %}
+          <span class="dot {% if loop.index == 1 %}active{% endif %}" data-q="{{ loop.index }}"></span>
+          {% endfor %}
+        </div>
+
+        <button type="button" class="btn-nav btn-next" id="nextBtn" onclick="changeQuestion(1)">
+          Next
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Hidden submit (FIX #1: Corrected HTML entity) -->
+      <button type="submit" class="btn-submit" id="submitBtn" style="display:none">
+        🧠 Submit Quiz &amp; See My IQ
+      </button>
+
+    </form>
+  </main>
+
+  <!-- Auto-submit overlay -->
+  <div class="auto-submit-overlay" id="autoSubmitOverlay" style="display:none">
+    <div class="auto-submit-box">
+      <div class="spinner"></div>
+      <p>Time's up! Submitting your answers…</p>
+    </div>
+  </div>
+
+  <!-- Pass Python data to JS (FIX #7: Safer JSON generation with error handling) -->
+  <script>
+    window.QUIZ_CONFIG = {
+      total: {{ total | default(0) }},
+      timePerQuestion: {{ time_per_question | default(30) }},
+      categories: {{ (questions | map(attribute='category') | list) if questions else [] | tojson | safe }}
+    };
+    
+    // Additional safety: validate required data
+    if (window.QUIZ_CONFIG.total === 0) {
+      console.error('No questions loaded!');
+    }
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

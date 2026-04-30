@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IQ Quiz — Test Your Mind</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="page-home">
+
+  <!-- Animated background orbs -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="home-container">
+
+    <!-- Logo / Badge -->
+    <div class="badge" data-anim="fade-up" style="--d:0s">
+      <span class="badge-dot"></span>
+      COGNITIVE ASSESSMENT
+    </div>
+
+    <!-- Hero heading -->
+    <h1 class="hero-title" data-anim="fade-up" style="--d:.1s">
+      How Sharp<br/>
+      <em>Is Your Mind?</em>
+    </h1>
+
+    <p class="hero-sub" data-anim="fade-up" style="--d:.2s">
+      15 curated questions · Logic, Math &amp; Pattern Recognition<br/>
+      Timed · Scored · IQ Estimated
+    </p>
+
+    <!-- Stats row -->
+    <div class="stats-row" data-anim="fade-up" style="--d:.3s">
+      <div class="stat">
+        <span class="stat-val">15</span>
+        <span class="stat-lbl">Questions</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-val">20s</span>
+        <span class="stat-lbl">Per Question</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-val">IQ</span>
+        <span class="stat-lbl">Score Estimate</span>
+      </div>
+    </div>
+
+    <!-- Name form -->
+    <form action="/quiz" method="POST" class="start-form" data-anim="fade-up" style="--d:.4s">
+      <div class="input-group">
+        <label for="name">Your Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter your name..."
+          maxlength="40"
+          required
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit" class="btn-start">
+        <span>Begin Quiz</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Leaderboard link -->
+    <a href="/leaderboard" class="link-lb" data-anim="fade-up" style="--d:.5s">
+      View Leaderboard →
+    </a>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
